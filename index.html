@@ -1,0 +1,1987 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Portal de Validación | DEMO</title>
+
+<meta name="description"
+      content="Portal de validación documental - demostración">
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<script>
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                institucional: "#8B263E",
+                dorado: "#B08D57",
+                oscuro: "#24171B"
+            }
+        }
+    }
+}
+</script>
+
+<style>
+
+/* =========================================================
+   VARIABLES
+========================================================= */
+
+:root {
+    --guinda: #8B263E;
+    --guinda-dark: #65192d;
+    --dorado: #B08D57;
+    --dorado-light: #d2b477;
+    --papel: #f7f2e8;
+    --texto: #292929;
+}
+
+
+/* =========================================================
+   BASE
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    background:
+        radial-gradient(
+            circle at 20% 20%,
+            rgba(176,141,87,.12),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 80% 80%,
+            rgba(139,38,62,.08),
+            transparent 30%
+        ),
+        #eee9df;
+
+    color: var(--texto);
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+
+/* =========================================================
+   TEXTURA TIPO PAPEL
+========================================================= */
+
+.paper-texture {
+
+    background-color: var(--papel);
+
+    background-image:
+        radial-gradient(
+            rgba(80,50,20,.08) 1px,
+            transparent 1px
+        );
+
+    background-size: 5px 5px;
+}
+
+
+/* =========================================================
+   MARCA DEMO
+========================================================= */
+
+.demo-watermark {
+
+    position: fixed;
+
+    top: 50%;
+    left: 50%;
+
+    transform:
+        translate(-50%, -50%)
+        rotate(-25deg);
+
+    z-index: 999;
+
+    pointer-events: none;
+
+    font-size:
+        clamp(45px, 9vw, 130px);
+
+    font-weight: 900;
+
+    letter-spacing: 10px;
+
+    color: rgba(139,38,62,.055);
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   BOTONES
+========================================================= */
+
+.btn-main {
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 8px;
+
+    padding: 13px 20px;
+
+    border-radius: 999px;
+
+    background: var(--guinda);
+
+    color: white;
+
+    font-weight: 800;
+
+    font-size: 13px;
+
+    border: none;
+
+    cursor: pointer;
+
+    transition: .25s;
+
+    box-shadow:
+        0 8px 25px rgba(139,38,62,.2);
+}
+
+.btn-main:hover {
+
+    background: var(--guinda-dark);
+
+    transform: translateY(-2px);
+}
+
+
+/* =========================================================
+   DOCUMENTO
+========================================================= */
+
+.document {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 1100px;
+
+    margin: auto;
+
+    background: var(--papel);
+
+    border:
+        1px solid
+        rgba(139,38,62,.25);
+
+    box-shadow:
+        0 25px 80px
+        rgba(0,0,0,.15);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   BORDE DECORATIVO
+========================================================= */
+
+.document::before {
+
+    content: "";
+
+    position: absolute;
+
+    inset: 14px;
+
+    border:
+        1px solid
+        rgba(176,141,87,.65);
+
+    pointer-events: none;
+
+    z-index: 1;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.document-header {
+
+    position: relative;
+
+    padding:
+        38px
+        50px
+        28px;
+
+    border-bottom:
+        3px solid
+        var(--guinda);
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   LOGOS DE DEMO
+========================================================= */
+
+.logo-row {
+
+    display: flex;
+
+    justify-content:
+        space-between;
+
+    align-items: center;
+
+    gap: 30px;
+
+    margin-bottom: 22px;
+}
+
+.logo-placeholder {
+
+    width: 145px;
+    height: 75px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    text-align: center;
+
+    color: var(--guinda);
+
+    font-weight: 900;
+
+    font-size: 12px;
+
+    line-height: 1.2;
+
+    border:
+        1px solid
+        rgba(176,141,87,.6);
+
+    background:
+        rgba(255,255,255,.35);
+}
+
+.logo-placeholder span {
+
+    display: block;
+
+    color: var(--dorado);
+
+    font-size: 9px;
+
+    margin-top: 5px;
+}
+
+
+/* =========================================================
+   TITULOS
+========================================================= */
+
+.gov-title {
+
+    color: var(--guinda);
+
+    font-size:
+        clamp(18px, 3vw, 28px);
+
+    font-weight: 900;
+
+    letter-spacing: .5px;
+}
+
+.gov-subtitle {
+
+    margin-top: 5px;
+
+    color: #555;
+
+    font-size:
+        clamp(11px, 1.8vw, 15px);
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+}
+
+.demo-label {
+
+    display: inline-block;
+
+    margin-top: 15px;
+
+    padding: 6px 13px;
+
+    border-radius: 5px;
+
+    background: var(--guinda);
+
+    color: white;
+
+    font-size: 10px;
+
+    font-weight: 900;
+
+    letter-spacing: 1.5px;
+}
+
+
+/* =========================================================
+   QR
+========================================================= */
+
+.qr-box {
+
+    position: absolute;
+
+    top: 30px;
+    right: 38px;
+
+    z-index: 5;
+
+    width: 115px;
+
+    padding: 8px;
+
+    background: white;
+
+    border:
+        1px solid
+        #aaa;
+}
+
+#qrcode {
+
+    width: 100%;
+
+    display: flex;
+
+    justify-content: center;
+}
+
+.qr-label {
+
+    margin-top: 5px;
+
+    font-size: 7px;
+
+    font-weight: 900;
+
+    text-align: center;
+
+    color: #555;
+}
+
+
+/* =========================================================
+   CONTENT
+========================================================= */
+
+.document-content {
+
+    position: relative;
+
+    z-index: 2;
+
+    padding:
+        35px 55px
+        50px;
+}
+
+
+/* =========================================================
+   ALERTA
+========================================================= */
+
+.demo-alert {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 12px;
+
+    padding: 14px 18px;
+
+    margin-bottom: 25px;
+
+    border-left:
+        5px solid
+        var(--guinda);
+
+    background:
+        rgba(139,38,62,.07);
+
+    color: var(--guinda);
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   TITULO DOCUMENTO
+========================================================= */
+
+.document-title {
+
+    text-align: center;
+
+    color: var(--guinda);
+
+    font-size:
+        clamp(22px, 4vw, 38px);
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    margin-bottom: 7px;
+}
+
+.document-subtitle {
+
+    text-align: center;
+
+    color: #555;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    margin-bottom: 35px;
+}
+
+
+/* =========================================================
+   FOLIO
+========================================================= */
+
+.folio-box {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 15px;
+
+    margin-bottom: 30px;
+}
+
+.folio {
+
+    padding: 17px;
+
+    background:
+        rgba(176,141,87,.08);
+
+    border:
+        1px solid
+        rgba(176,141,87,.45);
+
+    text-align: center;
+}
+
+.folio-label {
+
+    display: block;
+
+    color: #777;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 2px;
+
+    margin-bottom: 7px;
+}
+
+.folio-value {
+
+    color: var(--guinda);
+
+    font-size: 19px;
+
+    font-weight: 900;
+}
+
+
+/* =========================================================
+   SECCIONES
+========================================================= */
+
+.section-title {
+
+    padding: 10px 15px;
+
+    margin:
+        25px 0
+        15px;
+
+    color: white;
+
+    background:
+        var(--guinda);
+
+    font-size: 12px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+}
+
+
+/* =========================================================
+   DATOS
+========================================================= */
+
+.data-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    border:
+        1px solid
+        #cfc6b8;
+}
+
+.data-item {
+
+    min-height: 72px;
+
+    padding: 13px 16px;
+
+    border-right:
+        1px solid
+        #cfc6b8;
+
+    border-bottom:
+        1px solid
+        #cfc6b8;
+}
+
+.data-item:nth-child(even) {
+    border-right: none;
+}
+
+.data-label {
+
+    color: #777;
+
+    font-size: 9px;
+
+    font-weight: 900;
+
+    letter-spacing: 1px;
+
+    text-transform: uppercase;
+
+    margin-bottom: 7px;
+}
+
+.data-value {
+
+    color: #222;
+
+    font-size: 14px;
+
+    font-weight: 800;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   VIGENCIA
+========================================================= */
+
+.validity {
+
+    margin-top: 30px;
+
+    padding: 22px;
+
+    border:
+        2px solid
+        var(--dorado);
+
+    text-align: center;
+
+    background:
+        rgba(176,141,87,.06);
+}
+
+.validity strong {
+
+    display: block;
+
+    color: var(--guinda);
+
+    font-size: 24px;
+
+    margin-bottom: 7px;
+}
+
+.validity span {
+
+    font-size: 12px;
+
+    color: #555;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   FIRMAS
+========================================================= */
+
+.signature-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 45px;
+
+    margin-top: 55px;
+}
+
+.signature {
+
+    text-align: center;
+
+    padding-top: 50px;
+
+    border-top:
+        1px solid
+        #444;
+}
+
+.signature-name {
+
+    color: #222;
+
+    font-weight: 900;
+
+    font-size: 14px;
+}
+
+.signature-role {
+
+    color: #666;
+
+    margin-top: 5px;
+
+    font-size: 10px;
+
+    line-height: 1.5;
+}
+
+
+/* =========================================================
+   VALIDACIÓN
+========================================================= */
+
+.validation-area {
+
+    margin-top: 45px;
+
+    padding: 25px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(139,38,62,.07),
+            rgba(176,141,87,.08)
+        );
+
+    border:
+        1px solid
+        rgba(139,38,62,.2);
+
+    text-align: center;
+}
+
+.validation-area h3 {
+
+    color: var(--guinda);
+
+    font-size: 19px;
+
+    margin-bottom: 8px;
+}
+
+.validation-area p {
+
+    color: #666;
+
+    font-size: 11px;
+
+    line-height: 1.6;
+
+    margin-bottom: 18px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.document-footer {
+
+    padding:
+        18px 30px;
+
+    background: var(--guinda);
+
+    color: white;
+
+    text-align: center;
+
+    font-size: 9px;
+
+    font-weight: 700;
+
+    letter-spacing: 1px;
+}
+
+
+/* =========================================================
+   PORTAL
+========================================================= */
+
+.portal {
+
+    min-height: 100vh;
+
+    padding:
+        35px 15px;
+
+}
+
+.portal-header {
+
+    max-width: 1100px;
+
+    margin:
+        0 auto 25px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+.portal-brand {
+
+    color: var(--guinda);
+
+    font-weight: 900;
+
+    font-size: 18px;
+}
+
+.portal-sub {
+
+    color: #777;
+
+    font-size: 10px;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+.modal {
+
+    position: fixed;
+
+    inset: 0;
+
+    z-index: 5000;
+
+    display: none;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 20px;
+
+    background:
+        rgba(20,10,13,.75);
+
+    backdrop-filter:
+        blur(10px);
+}
+
+.modal.active {
+
+    display: flex;
+
+    animation:
+        modalIn .25s ease;
+}
+
+.modal-card {
+
+    width: 100%;
+
+    max-width: 460px;
+
+    background:
+        var(--papel);
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 30px 100px
+        rgba(0,0,0,.35);
+}
+
+.modal-top {
+
+    padding: 28px;
+
+    text-align: center;
+
+    color: white;
+
+    background:
+        var(--guinda);
+}
+
+.status-icon {
+
+    width: 65px;
+    height: 65px;
+
+    margin: auto;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: rgba(255,255,255,.15);
+
+    font-size: 30px;
+}
+
+.modal-top h2 {
+
+    margin-top: 15px;
+
+    font-size: 22px;
+
+    font-weight: 900;
+}
+
+.modal-body {
+
+    padding: 25px;
+}
+
+.validation-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 12px 0;
+
+    border-bottom:
+        1px solid
+        #ddd;
+}
+
+.validation-row span:first-child {
+
+    color: #777;
+
+    font-size: 10px;
+
+    font-weight: 900;
+}
+
+.validation-row span:last-child {
+
+    color: #222;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    text-align: right;
+}
+
+.close-button {
+
+    width: 100%;
+
+    margin-top: 20px;
+
+    padding: 13px;
+
+    border: none;
+
+    border-radius: 10px;
+
+    background: #222;
+
+    color: white;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width: 750px) {
+
+    .portal {
+        padding: 15px 8px;
+    }
+
+    .portal-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .document-header {
+        padding:
+            30px 20px 25px;
+    }
+
+    .logo-row {
+        padding-right: 0;
+
+        flex-direction: column;
+    }
+
+    .qr-box {
+        position: relative;
+
+        top: auto;
+        right: auto;
+
+        margin: 20px auto 0;
+    }
+
+    .document-content {
+        padding:
+            25px 20px 35px;
+    }
+
+    .folio-box {
+        grid-template-columns: 1fr;
+    }
+
+    .data-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .data-item {
+        border-right: none;
+    }
+
+    .signature-grid {
+        grid-template-columns: 1fr;
+
+        gap: 50px;
+    }
+
+    .document::before {
+        inset: 8px;
+    }
+}
+
+
+/* =========================================================
+   PRINT
+========================================================= */
+
+@media print {
+
+    @page {
+        size: A4;
+        margin: 8mm;
+    }
+
+    body {
+        background: white;
+    }
+
+    .portal-header,
+    .demo-watermark,
+    .validation-area,
+    .modal,
+    .no-print {
+        display: none !important;
+    }
+
+    .portal {
+        padding: 0;
+    }
+
+    .document {
+        max-width: none;
+
+        width: 100%;
+
+        box-shadow: none;
+
+        border: none;
+    }
+
+    .document::before {
+        display: block;
+    }
+
+    .document-header {
+        padding:
+            25px 35px 20px;
+    }
+
+    .document-content {
+        padding:
+            20px 35px 30px;
+    }
+
+    .document-footer {
+        break-inside: avoid;
+    }
+
+    .data-item,
+    .signature-grid,
+    .validity,
+    .folio-box {
+        break-inside: avoid;
+    }
+}
+
+@keyframes modalIn {
+
+    from {
+        opacity: 0;
+        transform: scale(.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+</style>
+</head>
+
+
+<body>
+
+<!-- =====================================================
+     MARCA DE DEMOSTRACIÓN
+====================================================== -->
+
+<div class="demo-watermark">
+    DEMOSTRACIÓN
+</div>
+
+
+<div class="portal">
+
+
+    <!-- =================================================
+         PORTAL HEADER
+    ================================================== -->
+
+    <header class="portal-header no-print">
+
+        <div>
+
+            <div class="portal-brand">
+                Portal de Validación Documental
+            </div>
+
+            <div class="portal-sub">
+                Sistema de demostración · GitHub Pages
+            </div>
+
+        </div>
+
+
+        <div class="flex gap-2 flex-wrap">
+
+            <button
+                onclick="openValidation()"
+                class="btn-main"
+            >
+                ✓ VERIFICAR DOCUMENTO
+            </button>
+
+
+            <button
+                onclick="window.print()"
+                class="btn-main"
+            >
+                🖨 IMPRIMIR
+            </button>
+
+        </div>
+
+    </header>
+
+
+
+    <!-- =================================================
+         DOCUMENTO
+    ================================================== -->
+
+    <main class="document paper-texture">
+
+
+        <!-- HEADER -->
+
+        <section class="document-header">
+
+
+            <div class="logo-row">
+
+
+                <div class="logo-placeholder">
+
+                    GUERRERO
+
+                    <span>
+                        IDENTIDAD INSTITUCIONAL
+                    </span>
+
+                </div>
+
+
+                <div>
+
+                    <div class="gov-title">
+                        HUITZUCO DE LOS FIGUEROA
+                    </div>
+
+                    <div class="gov-subtitle">
+                        MUNICIPIO · 2024 — 2027
+                    </div>
+
+                </div>
+
+
+                <div class="logo-placeholder">
+
+                    HUITZUCO
+
+                    <span>
+                        AYUNTAMIENTO
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+            <div class="demo-label">
+                DOCUMENTO DE DEMOSTRACIÓN · SIN VALIDEZ OFICIAL
+            </div>
+
+
+            <!-- QR -->
+
+            <div class="qr-box">
+
+                <div id="qrcode"></div>
+
+                <div class="qr-label">
+                    ESCANEA PARA VERIFICAR
+                </div>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- CONTENT -->
+
+        <section class="document-content">
+
+
+            <!-- ALERT -->
+
+            <div class="demo-alert">
+
+                <span style="font-size:20px;">
+                    ⚠
+                </span>
+
+                <span>
+                    Este documento es únicamente un prototipo
+                    de interfaz. No constituye un permiso,
+                    autorización o documento gubernamental.
+                </span>
+
+            </div>
+
+
+
+            <!-- TITLE -->
+
+            <h1 class="document-title">
+                PORTAL DE VALIDACIÓN
+            </h1>
+
+            <div class="document-subtitle">
+                PERMISO PROVISIONAL PARA CIRCULAR · DEMOSTRACIÓN
+            </div>
+
+
+
+            <!-- FOLIO -->
+
+            <div class="folio-box">
+
+
+                <div class="folio">
+
+                    <span class="folio-label">
+                        FOLIO DE DEMOSTRACIÓN
+                    </span>
+
+                    <span class="folio-value">
+                        HTZ-BB2613
+                    </span>
+
+                </div>
+
+
+                <div class="folio">
+
+                    <span class="folio-label">
+                        ESTATUS
+                    </span>
+
+                    <span
+                        class="folio-value"
+                        style="font-size:16px;"
+                    >
+                        REGISTRO DE DEMOSTRACIÓN
+                    </span>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- VIGENCIA -->
+
+            <div class="validity">
+
+                <strong>
+                    VÁLIDO POR 30 DÍAS
+                </strong>
+
+                <span>
+                    Expedición:
+                    <b>22/09/2026</b>
+                    &nbsp; · &nbsp;
+                    Vencimiento:
+                    <b>22/10/2026</b>
+                </span>
+
+            </div>
+
+
+
+            <!-- OWNER -->
+
+            <div class="section-title">
+                Datos del propietario
+            </div>
+
+
+            <div class="data-grid">
+
+
+                <div class="data-item">
+
+                    <div class="data-label">
+                        Nombre
+                    </div>
+
+                    <div class="data-value">
+                        JOSE JULIAN AGUILAR NAVARRO
+                    </div>
+
+                </div>
+
+
+                <div class="data-item">
+
+                    <div class="data-label">
+                        Tipo de registro
+                    </div>
+
+                    <div class="data-value">
+                        DEMOSTRACIÓN
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- VEHICLE -->
+
+            <div class="section-title">
+                Datos del vehículo
+            </div>
+
+
+            <div class="data-grid">
+
+
+                <div class="data-item">
+
+                    <div class="data-label">
+                        Marca
+                    </div>
+
+                    <div class="data-value">
+                        JEEP
+                    </div>
+
+                </div>
+
+
+                <div class="data-item">
+
+                    <div class="data-label">
+                        Línea
+                    </div>
+
+                    <div class="data-value">
+                        GRAND CHEROKEE
+                    </div>
+
+                </div>
+
+
+                <div class="data-item">
+
+                    <div class="data-label">
+                        Año / Modelo
+                    </div>
+
+                    <div class="data-value">
+                        2012
+                    </div>
+
+                </div>
+
+
+                <div class="data-item">
+
+                    <div class="data-label">
+                        Color
+                    </div>
+
+                    <div class="data-value">
+                        GRIS PLATA
+                    </div>
+
+                </div>
+
+
+                <div class="data-item">
+
+                    <div class="data-label">
+                        Motor
+                    </div>
+
+                    <div class="data-value">
+                        HEHCO EN USA
+                    </div>
+
+                </div>
+
+
+                <div class="data-item">
+
+                    <div class="data-label">
+                        Número de serie
+                    </div>
+
+                    <div class="data-value">
+                        1C4RJFAT9CC3O6813
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- SIGNATURES -->
+
+            <div class="section-title">
+                Firmas de referencia
+            </div>
+
+
+            <div class="signature-grid">
+
+
+                <div class="signature">
+
+                    <div class="signature-name">
+                        DRA. NÁJERA NÁJERA
+                    </div>
+
+                    <div class="signature-role">
+                        Referencia de interfaz<br>
+                        Jueza Municipal / Juez Tránsito Conciliatorio
+                    </div>
+
+                </div>
+
+
+                <div class="signature">
+
+                    <div class="signature-name">
+                        LIC. ROSA LÓPEZ MORA
+                    </div>
+
+                    <div class="signature-role">
+                        Referencia de interfaz<br>
+                        Directora de Tránsito Municipal
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- VALIDATION -->
+
+            <div class="validation-area no-print">
+
+                <h3>
+                    🔐 Validación digital
+                </h3>
+
+                <p>
+                    El código QR de esta demostración genera
+                    una dirección de validación basada en el
+                    folio mostrado en este prototipo.
+                </p>
+
+                <button
+                    onclick="openValidation()"
+                    class="btn-main"
+                >
+                    CONSULTAR ESTATUS
+                </button>
+
+            </div>
+
+
+        </section>
+
+
+
+        <!-- FOOTER -->
+
+        <footer class="document-footer">
+
+            PROTOTIPO DE INTERFAZ · SIN VALIDEZ OFICIAL ·
+            NO ES UN DOCUMENTO GUBERNAMENTAL
+
+        </footer>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- =====================================================
+     MODAL
+====================================================== -->
+
+<div
+    id="validationModal"
+    class="modal"
+>
+
+
+    <div class="modal-card">
+
+
+        <div class="modal-top">
+
+
+            <div class="status-icon">
+                ✓
+            </div>
+
+
+            <h2>
+                REGISTRO ENCONTRADO
+            </h2>
+
+
+            <div
+                style="
+                    margin-top:6px;
+                    font-size:10px;
+                    opacity:.8;
+                "
+            >
+                VALIDACIÓN DE DEMOSTRACIÓN
+            </div>
+
+
+        </div>
+
+
+        <div class="modal-body">
+
+
+            <div class="validation-row">
+
+                <span>
+                    FOLIO
+                </span>
+
+                <span>
+                    HTZ-BB2613
+                </span>
+
+            </div>
+
+
+            <div class="validation-row">
+
+                <span>
+                    PROPIETARIO
+                </span>
+
+                <span>
+                    JOSE JULIAN AGUILAR NAVARRO
+                </span>
+
+            </div>
+
+
+            <div class="validation-row">
+
+                <span>
+                    VEHÍCULO
+                </span>
+
+                <span>
+                    JEEP GRAND CHEROKEE 2012
+                </span>
+
+            </div>
+
+
+            <div class="validation-row">
+
+                <span>
+                    EXPEDICIÓN
+                </span>
+
+                <span>
+                    22/09/2026
+                </span>
+
+            </div>
+
+
+            <div class="validation-row">
+
+                <span>
+                    VENCIMIENTO
+                </span>
+
+                <span>
+                    22/10/2026
+                </span>
+
+            </div>
+
+
+            <div
+                style="
+                    margin-top:20px;
+                    padding:15px;
+                    background:#fff3cd;
+                    border:1px solid #e5c76b;
+                    border-radius:10px;
+                    color:#745d18;
+                    font-size:11px;
+                    line-height:1.5;
+                    text-align:center;
+                    font-weight:700;
+                "
+            >
+
+                ⚠ ESTE RESULTADO PERTENECE
+                ÚNICAMENTE A UNA DEMOSTRACIÓN.
+                <br><br>
+                NO CONFIRMA LA AUTENTICIDAD
+                DE UN DOCUMENTO OFICIAL.
+
+            </div>
+
+
+            <button
+                onclick="closeValidation()"
+                class="close-button"
+            >
+                CERRAR
+
+            </button>
+
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+<!-- =====================================================
+     QR LIBRARY
+====================================================== -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js"></script>
+
+
+<script>
+
+/* =========================================================
+   CONFIGURACIÓN
+========================================================= */
+
+const CONFIG = {
+
+    folio:
+        "HTZ-BB2613",
+
+    propietario:
+        "JOSE JULIAN AGUILAR NAVARRO",
+
+    vehiculo:
+        "JEEP GRAND CHEROKEE 2012",
+
+    expedicion:
+        "22/09/2026",
+
+    vencimiento:
+        "22/10/2026"
+
+};
+
+
+/* =========================================================
+   GENERAR URL DE VALIDACIÓN
+========================================================= */
+
+function getValidationURL() {
+
+    /*
+       GitHub Pages toma automáticamente
+       la URL actual del sitio.
+
+       Ejemplo:
+
+       https://usuario.github.io/repositorio/
+
+    */
+
+    const baseURL =
+        window.location.origin +
+        window.location.pathname;
+
+    return (
+        baseURL +
+        "?validar=" +
+        encodeURIComponent(
+            CONFIG.folio
+        )
+    );
+
+}
+
+
+/* =========================================================
+   GENERAR QR
+========================================================= */
+
+function generateQR() {
+
+    const container =
+        document.getElementById(
+            "qrcode"
+        );
+
+    if (!container) {
+        return;
+    }
+
+    container.innerHTML = "";
+
+    try {
+
+        const qr =
+            qrcode(
+                0,
+                "M"
+            );
+
+        qr.addData(
+            getValidationURL()
+        );
+
+        qr.make();
+
+        container.innerHTML =
+            qr.createImgTag(
+                4,
+                0
+            );
+
+        const image =
+            container.querySelector(
+                "img"
+            );
+
+        if (image) {
+
+            image.style.width =
+                "90px";
+
+            image.style.height =
+                "90px";
+
+            image.alt =
+                "Código QR de demostración";
+
+        }
+
+    }
+
+    catch (error) {
+
+        container.innerHTML = `
+            <div style="
+                width:90px;
+                height:90px;
+                display:flex;
+                align-items:center;
+                justify-content:center;
+                text-align:center;
+                font-size:9px;
+                color:#777;
+            ">
+                QR NO DISPONIBLE
+            </div>
+        `;
+
+    }
+
+}
+
+
+/* =========================================================
+   MODAL
+========================================================= */
+
+function openValidation() {
+
+    document
+        .getElementById(
+            "validationModal"
+        )
+        .classList
+        .add("active");
+
+}
+
+
+function closeValidation() {
+
+    document
+        .getElementById(
+            "validationModal"
+        )
+        .classList
+        .remove("active");
+
+}
+
+
+/* =========================================================
+   CERRAR MODAL AL HACER CLICK FUERA
+========================================================= */
+
+document
+    .getElementById(
+        "validationModal"
+    )
+    .addEventListener(
+        "click",
+        function(event) {
+
+            if (
+                event.target ===
+                this
+            ) {
+
+                closeValidation();
+
+            }
+
+        }
+    );
+
+
+/* =========================================================
+   ESC PARA CERRAR
+========================================================= */
+
+document.addEventListener(
+    "keydown",
+    function(event) {
+
+        if (
+            event.key === "Escape"
+        ) {
+
+            closeValidation();
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   DETECTAR QR / PARAMETRO DE VALIDACIÓN
+========================================================= */
+
+function checkValidationParameter() {
+
+    const params =
+        new URLSearchParams(
+            window.location.search
+        );
+
+    const folio =
+        params.get(
+            "validar"
+        );
+
+
+    if (
+        folio ===
+        CONFIG.folio
+    ) {
+
+        setTimeout(
+            () => {
+
+                openValidation();
+
+            },
+            700
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   INICIALIZACIÓN
+========================================================= */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        generateQR();
+
+        checkValidationParameter();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
